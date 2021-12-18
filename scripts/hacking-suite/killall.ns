@@ -1,0 +1,59 @@
+import {settings, getItem, setItem, localeHHMMSS} from "/scripts/hacking-suite/common.ns"
+
+const _settings = settings();
+
+/** @param {NS} ns **/
+function getScripts(ns, location) {
+	let scripts = [];
+	
+	for (const script of ns.ls('home', location)) {
+		scripts.push(location + script);
+	}
+
+	return scripts;
+}
+
+/** @param {NS} ns **/
+export async function main(ns) {
+	let forced = ns.args[0];
+
+	if (forced == "y") {
+		forced = true;
+	}
+
+    ns.print(`Starting to killall on servers at [${localeHHMMSS()}]`);
+
+	let hostname = ns.getHostname();
+
+	if (hostname !== 'home') {
+		throw new Exception("Must run from 'home'");
+	}
+
+	const serverMap = getItem(_settings.keys.serverMap);
+
+	if (!serverMap || serverMap.lastUpdate < new Date().getTime() - _settings.mapRefreshInterval) {
+		ns.print(`Starting to collect server information at [${localeHHMMSS()}]`);
+		ns.spawn(`${_settings.baseLocation}find-servers.ns`, 1, `${_settings.baseLocation}killall.ns`);
+		ns.exit();
+		return;
+	}
+
+	const scripts = getScripts(ns, _settings.baseLocation);
+	for (const script in scripts) {
+		await ns.scriptKill(script, 'home');
+	}
+
+	const killServers = Object.keys(serverMap.servers)
+		.filter((hostname) => ns.serverExists(hostname))
+		.filter((hostname) => hostname != 'home');
+
+
+	for (const server of killServers) {
+		for (const script of scripts) {
+			if (forced) ns.killall(server);
+			await ns.scriptKill(script, server);
+		}
+	}
+
+	ns.print(`All managed processes killed at [${localeHHMMSS()}]`);
+}

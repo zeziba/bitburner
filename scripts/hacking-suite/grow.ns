@@ -1,0 +1,12 @@
+/** @param {NS} ns **/
+export async function main(ns) {
+    const target = ns.args[0];
+	const delay = ns.args[1];
+
+	if (delay && delay > 0) await ns.sleep(delay);
+	if (!target)
+		return false;
+
+	ns.print(`Starting grow on ${target}\n`);
+	await ns.grow(target);
+}

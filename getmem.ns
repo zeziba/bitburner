@@ -1,0 +1,21 @@
+import {settings, getItem, setItem, localeHHMMSS} from "/scripts/hacking-suite/common.ns"
+
+/** @param {NS} ns **/
+export async function main(ns) {
+	let total = 0;
+
+	const serverMap = getItem(settings().keys.serverMap);
+
+	const _servers = Object.keys(serverMap.servers)
+		.filter((hostname) => ns.serverExists(hostname))
+		.filter((hostname) => hostname !== 'home');
+
+	for (const server of _servers) {
+		if (ns.hasRootAccess(server))
+			total += ns.getServerMaxRam(server) - ns.getServerUsedRam(server);
+	}
+
+	ns.print(total);
+	await ns.sleep(1000000);
+	return total;
+}

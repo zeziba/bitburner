@@ -1,0 +1,17 @@
+/** @param {NS} ns **/
+export async function main(ns) {
+    // Will transfer given scripts to target machine
+	var target = ns.args[0];
+	var files = ns.args[1];
+
+	try {
+		ns.print(`Attempting to transfer files ${files} to ${target}\n`);
+		await ns.scp(files, target);
+		ns.print(`Success on transfer of files to ${target}\n`);
+	}
+	catch (err) {
+		ns.print(`Error ${err} on server ${target} with while transfering files ${files}\n`);
+		await ns.sleep(60000);
+		return err;
+	}
+}

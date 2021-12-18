@@ -1,0 +1,61 @@
+export function settings() {
+  return {
+    minSecurityLevelOffset: 2,
+    maxMoneyMultiplayer: 0.9,
+    minSecurityWeight: 100,
+    mapRefreshInterval: 24 * 60 * 60 * 1000,
+    minRamOnServer: 2,
+    homeRamReserved: 20,
+    homeRamReservedBase: 20,
+    homeRamExtraRamReserved: 12,
+    homeRamBigMode: 64,
+    maxWeakenTime: 30 * 60,
+    loopRunTime: 1 * 2 *1000,
+    timeout_after: 5 * 1000,
+    timeout: 5,
+    maxAttempts: 3,
+    maxAcceptableMoney: 10000000,
+    hackAllotment: 0.1,
+    growAllotment: 0.5,
+    weakenAllotment: 0.4,
+    baseLocation: "/scripts/hacking-suite/",
+    baseServer: "pserv-",
+    keys: {
+      serverMap: 'BB_SERVER_MAP',
+      hackTarget: 'BB_HACK_TARGET',
+      action: 'BB_ACTION',
+    },
+    changes: {
+      hack: 0.002,
+      grow: 0.004,
+      weaken: 0.05,
+    },
+  }
+}
+
+export function localeHHMMSS(ms = 0) {
+  if (!ms) {
+    ms = new Date().getTime()
+  }
+
+  return new Date(ms).toLocaleTimeString()
+}
+
+export function getItem(key) {
+  let item = localStorage.getItem(key);
+
+  return item ? JSON.parse(item) : undefined;
+}
+
+export function setItem(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+/** @param {NS} ns **/
+export async function main(ns) {
+  return {
+    settings,
+    getItem,
+    setItem,
+  }
+}

@@ -1,0 +1,26 @@
+/** @param {NS} ns **/
+export async function main(ns) {
+    var target = ns.args[0];
+	var script = ns.args[1];
+
+	var mem_max = 0;
+	var mem_used = 0;
+	var mem_cost = 0;
+
+	try {
+		mem_max = ns.getServerMaxRam(target);
+		mem_used = ns.getServerUsedRam(target);
+		mem_cost = ns.getScriptRam(script, target);
+
+		ns.print(`Server: ${target}, Ram: ${mem_max}, Used Ram: ${mem_used}, Ram Cost of ${script}: ${mem_cost}\n`)
+		return calculateMemory(mem_max, mem_used, mem_cost);
+	}
+	catch (err) {
+		ns.print(`Error ${err} on server ${target} with script memory-analyzer\n`)
+		return err;
+	}
+}
+
+function calculateMemory(max_memory, memory, cost) {
+	return Math.floor((max_memory - memory) / cost);
+}

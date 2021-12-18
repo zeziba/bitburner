@@ -1,0 +1,24 @@
+After 15hrs of running:
+
+└ Threads:
+    1
+
+└ Args: []
+
+└ Online Time:
+    14 hours 56 minutes 41 seconds
+
+└ Offline Time:
+    10 seconds
+
+└ Total online production:
+    $403.921b
+    120.069m hacking exp
+
+└ Online production rate:
+    $7.508m / sec
+    2.232k hacking exp / sec
+
+└ Total offline production:
+    $0.000
+    23.760k hacking exp

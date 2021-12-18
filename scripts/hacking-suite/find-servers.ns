@@ -1,0 +1,129 @@
+import {settings, setItem, localeHHMMSS} from "/scripts/hacking-suite/common.ns"
+// Find servers and map them to a common storage
+
+/** @param {NS} ns **/
+export async function main(ns) {
+	var runAfter = ns.args[0];
+
+    ns.print(`Starting to locate servers at [${localeHHMMSS()}]`);
+
+	let hostname = ns.getHostname();
+	if (hostname !== 'home') {
+		throw new Exception('Run script from home');
+	}
+
+	const serverMap = { servers: {}, lastUpdate: new Date().getTime()};
+	const scanArray = ['home'];
+
+	while (scanArray.length) {
+		// Get the first entry from scanArry while shifting it off
+		const host = scanArray.shift();
+		ns.print(`Scanning from ${host}`);
+
+		// Populate the host found in the serverMap
+		serverMap.servers[host] = {
+			host: host,
+			ports: ns.getServerNumPortsRequired(host),
+			hackignLevel: ns.getServerRequiredHackingLevel(host),
+			maxMoney: ns.getServerMaxMoney(host),
+			growth: ns.getServerGrowth(host),
+			minSecurityLevel: ns.getServerMinSecurityLevel(host),
+			hackingLevel: ns.getServerRequiredHackingLevel(host),
+			ram: ns.getServerMaxRam(host),
+			files: ns.ls(host),
+		}
+
+		// Get the connects to current host
+		const connections = ns.scan(host) || ['home'];
+		serverMap.servers[host].connections = connections;
+
+		// Push all the hosts found to the scanArray
+		connections.filter((hostname) => !serverMap.servers[hostname]).forEach((hostname) => scanArray.push(hostname))
+	}
+
+	let hasAllParents = false;
+
+	// Go through all hosts and set up the associations
+	while (!hasAllParents) {
+		hasAllParents = true;
+
+		// Create an object that sorts the connections for the host
+		Object.keys(serverMap.servers).forEach((hostname) => {
+			// Get the current host
+			const server = serverMap.servers[hostname];
+
+			if (!server.parent) hasAllParents = false;
+
+			// If current host is the home node then set it up
+			if (hostname === 'home') {
+				server.parent = 'home';
+				server.children = server.children ? server.children : [];
+			}
+
+			// Set up the bought servers, if name is not started with 'psver-' then change
+			if (hostname.includes("psver-")) {
+				server.parent = 'home';
+				server.children = [];
+
+				if (serverMap.servers[server.parent].children) {
+					serverMap.servers[server.parent].children.push(hostname);
+				}
+				else {
+					serverMap.servers[server.parent].children = [hostname];
+				}
+			}
+
+			// If the current host has not had it's parent found then do so
+			if (!server.parent) {
+				// If the connections of the current node is 1 then create the paths due to this
+				if (server.connections.length === 1) {
+					server.parent = server.connections[0];
+					server.children = [];
+
+					if (serverMap.servers[server.parent].children) {
+						serverMap.servers[server.parent].children.push(hostname);
+					}
+					else {
+						serverMap.servers[server.parent].children = [hostname];
+					}
+				}
+				// Create node connection if the connections if not equal to 1
+				else {
+					// If there is a lack of children nodes create an empty list
+					if (!server.children) {
+						server.children = []
+					}
+
+					// Create and locate the children nodes
+					if (server.children.length) {
+						const parent = server.connections.filter((hostname) => !server.children.includes(hostname))
+
+						if (parent.length === 1) {
+							server.parent = parent.shift();
+
+							if (serverMap.servers[server.parent].children) {
+								serverMap.servers[server.parent].children.push(hostname);
+							}
+							else {
+								serverMap.servers[server.parent].children = [hostname];
+							}
+						}
+					}
+				}
+			}
+		})
+	}
+	
+    ns.print(`Finished locating servers at [${localeHHMMSS()}]`);
+	setItem(settings().keys.serverMap, serverMap);
+
+	if (runAfter) {
+		try {
+			ns.spawn(runAfter, 1);
+		}
+		catch (err) {
+			ns.print(`Error occured ${err} while on ${runAfter}\n`);
+			return err;
+		}
+	}
+}

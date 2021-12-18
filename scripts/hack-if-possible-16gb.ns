@@ -1,0 +1,42 @@
+/** @param {NS} ns **/
+export async function main(ns) {
+    // Target script to be run on a server
+	var script = ns.args[0];
+	var host = ns.args[1];
+
+	var target_script = "/scripts/target-machine.ns"
+	var files = [target_script, script];
+
+	// Move files to target machine\
+	if (host != "home")	await ns.scp(files, host);
+
+	var log_msg_attempt = "Attempting to start on ";
+	var log_msg_failed = "Failed to start on ";
+	var log_msg_complete = "Success to start on ";
+
+	// Kill alls cripts on target server
+	ns.killall(host);
+
+	for (const sub_host of ns.scan(host)) {
+		if (sub_host == "home") continue;
+		// Locate any connected ip to current
+		await ns.write("log.txt", log_msg_attempt + sub_host + "\n");
+		if (ns.getServerNumPortsRequired(sub_host) > 0) {
+			if (ns.fileExists("BruteSSH.exe", "home")) {
+				ns.brutessh(sub_host);
+			}
+			else {
+				await ns.write("log.txt", log_msg_failed + sub_host + "\n");
+				continue;
+			}
+		}
+		
+		ns.nuke(sub_host);
+
+		if (ns.getHackingLevel() > ns.getServerRequiredHackingLevel(sub_host)) {
+			ns.exec(target_script, host, 1, sub_host, script);
+			await ns.sleep(100);
+			await ns.write("log.txt", log_msg_complete + sub_host + "\n");
+		}
+	}
+}

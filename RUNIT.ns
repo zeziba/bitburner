@@ -1,0 +1,4 @@
+/** @param {NS} ns **/
+export async function main(ns) {
+    ns.run("/scripts/hack-if-possible-3.ns", 1, "/scripts/hacking-template.ns", "home")
+}

@@ -1,0 +1,24 @@
+/** @param {NS} ns **/
+export async function main(ns) {
+    var target = ns.args[0];
+	var t_script = ns.args[1];
+
+	await ns.scp(t_script, target);
+	while (!ns.hasRootAccess(target)) {
+		ns.nuke(target);
+	}
+
+	// Get memory usage of script
+	var mem_usage = ns.getScriptRam(t_script, target);
+	var server_max = ns.getServerMaxRam(target);
+	var server_current = ns.getServerUsedRam(target);
+
+	// Run main script with full memory usage
+	var  thread_number = Math.floor((server_max - server_current) / mem_usage);
+	if (thread_number == 0) {
+		await ns.write("log.txt", "Failed to create thread, no mem! @" + target);
+		return 0;
+	}
+	
+	await ns.write("log.txt", "Host@" + target + " PID:" + ns.exec(t_script, target, thread_number) + "\n");
+}

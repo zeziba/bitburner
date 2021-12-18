@@ -1,0 +1,12 @@
+# Ignore all logfiles and tempfiles.
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Ignore templates
+/.templates
+/.templates/*
+/.vscode
+/.vscode/*
+template*

@@ -1,0 +1,13 @@
+/** @param {NS} ns **/
+export async function main(ns) {
+    var target = ns.args[0];
+	var t_script = ns.args[1];
+
+	// Get memory usage of script
+	var mem_usage = ns.getScriptRam(t_script, target);
+	var server_max = ns.getServerMaxRam(target);
+	var server_current = ns.getServerUsedRam(target);
+
+	// Run main script with full memory usage
+	ns.write("output.txt", Math.floor((server_max - server_current) / mem_usage) + "\n");
+}

@@ -1,0 +1,18 @@
+/** @param {NS} ns **/
+export async function main(ns) {
+    var depth = ns.args[0];
+	var base = ns.args[1];
+
+	var script = "/scripts/hack-if-possible.ns";
+	var t_script = "/scripts/n00dles.ns";
+	var files = [script, t_script];
+
+	if (base != "home") ns.scp(files, base);
+
+	for (const sub_host in ns.scan(base)) {
+		if (sub_host != "home") continue;
+		ns.killall(sub_host);
+		ns.run(script, 1, t_script, sub_host);
+		await ns.sleep(100);
+	}
+}

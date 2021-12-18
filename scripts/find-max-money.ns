@@ -1,0 +1,39 @@
+/** @param {NS} ns **/
+export async function main(ns) {
+	// Will scan 3-deep for the one with the highest money and best difficulty
+    var maxServer = "";
+	var maxAmount = 0;
+
+	var output_file = "results.txt";
+
+	var p_hacking_level = ns.getHackingLevel();
+
+	var hosts = []
+	for (const host of ns.scan("home")) {
+		for (const sub_host of ns.scan(host)) {
+			for (const sub_sub_host of ns.scan(sub_host)) {
+				hosts.push(sub_sub_host);
+			}
+			hosts.push(sub_host);
+		}
+		hosts.push(host);
+	}
+	var set_of_hosts = [...new Set(hosts)];
+
+	for (const host of set_of_hosts) {
+		var h_money = ns.getServerMaxMoney(host);
+		var h_hacking_level = ns.getServerRequiredHackingLevel(host);
+		if (p_hacking_level > h_hacking_level) {
+			if (h_money > maxAmount) {
+				maxAmount = h_money; 
+				maxServer = host;
+			}
+		}
+
+		// Log results
+		await ns.write(output_file, "Server: " + host + ", Max Money: $" + h_money, " Hacking Level: " + h_hacking_level + "\n");
+	}
+
+	await ns.write(output_file, "\n\n\n\nPick: " + maxServer + " Money: " + maxAmount);
+	return [maxServer, maxAmount];
+}
