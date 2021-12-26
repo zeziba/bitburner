@@ -10,3 +10,6 @@
 /.vscode
 /.vscode/*
 template*
+
+#ignore junk files
+/junk

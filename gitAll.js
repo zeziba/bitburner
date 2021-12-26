@@ -6,8 +6,10 @@
     ['repository', 'bitburner'],
     ['branch', 'main'],
     ['download', []], 
-    ['new-file', []], 
+    ['tree_file', 'GitTheseFiles.txt']
 ];
+
+const delim = "\r\n";
 
 // @ts-ignore
 export function autocomplete(data, _) {
@@ -20,27 +22,18 @@ export function autocomplete(data, _) {
  *  @param {import(".").NS } ns  
  */
 export async function main(ns) {
-    /** @type {string | any} */
-    const target = ns.args[0]
-
-    // Get the target file from github and process it
-    let inputFile = ""
-    /** @type {Array<string> | any} */
-    let _files = []
-
-    ns.wget(target, "ready.txt", 'home')
-
-    for (const line in inputFile.split('\n'))
-        _files.append(line)
-    
     // @ts-ignore
     const options = ns.flags(argsSchema);
     const baseUrl = `https://raw.githubusercontent.com/${options.github}/${options.repository}/${options.branch}/`;
-    const filesToDownload = options['new-file'].concat(_files)
+
+    ns.wget(`${baseUrl}${options.tree_file}`, "")
+
+    for (const line in ns.read(options.tree_file).split(delim))
+        options.download.push(line);
     
     
-    for (const localFilePath of filesToDownload) {
-        const remoteFilePath = baseUrl + localFilePath.substr(options.subfolder.length);
+    for (const localFilePath of options.download) {
+        const remoteFilePath = `${baseUrl}${localFilePath}`;
         ns.print(`Trying to update "${localFilePath}" from ${remoteFilePath} ...`);
         if (await ns.wget(`${remoteFilePath}?ts=${new Date().getTime()}`, localFilePath))
             ns.tprint(`SUCCESS: Updated "${localFilePath}" to the latest from ${remoteFilePath}`);
