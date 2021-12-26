@@ -1,4 +1,4 @@
-import {localeHHMMSS, settings} from "../../../hacking-suite-v2/common.js"
+import {localeHHMMSS, settings} from "../../common.js"
 
 /** @param {import("../../..").NS } ns  **/
 export async function main(ns) {

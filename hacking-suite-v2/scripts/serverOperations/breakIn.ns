@@ -1,4 +1,4 @@
-import { settings } from "../../../hacking-suite-v2/common.ns";
+import { settings } from "../../common.ns";
 
 /** Attempts to gain access to the target server
  * @param {import("../../..").NS } ns

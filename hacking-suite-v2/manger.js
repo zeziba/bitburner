@@ -1,5 +1,5 @@
-import * as common from "../hacking-suite-v2/common.js"
-import { Server } from "../hacking-suite-v2/scripts/serverOperations/server.js"
+import * as common from "./common.js"
+import { Server } from "./scripts/serverOperations/server.js"
 
 const home = "home";
 

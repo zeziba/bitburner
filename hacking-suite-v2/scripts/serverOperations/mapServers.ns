@@ -1,4 +1,4 @@
-import { localeHHMMSS, setItem, settings } from "../../../hacking-suite-v2/common.ns";
+import { localeHHMMSS, setItem, settings } from "../../common.ns";
 // Find servers and map them to a common storage
 
 const baseName = "home";
