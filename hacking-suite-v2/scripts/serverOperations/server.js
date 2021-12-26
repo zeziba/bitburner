@@ -1,5 +1,5 @@
-import { convertMMSS, scripts, settings } from "../../common.js";
-import { unlock } from "./breakIn.js";
+import { convertMMSS, scripts, settings } from "../../../hacking-suite-v2/common.js";
+import { unlock } from "../../../hacking-suite-v2/scripts/serverOperations/breakIn.js";
 
 /** Class Server is an api designed to allow for access to a Server object that lets various actions happen to the server */
 export class Server {

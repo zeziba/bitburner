@@ -1,4 +1,4 @@
-import { settings } from "../../common.js";
+import { settings } from "../../../hacking-suite-v2/common.js";
 
 /** Attempts to gain access to the target server
  * @param {import("../../..").NS } ns
