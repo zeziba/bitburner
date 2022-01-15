@@ -1,10 +1,6 @@
 {
     "author": "COE",
-    "compilerOptions": {
-        "paths": {
-            "baseUrl": "./hacking-suite-v2"
-        }
-      },
-    "name": "bitburner-bigboi",
-    "types": "index.d.ts",  "version": "1.0.1"
+    "include": ["hackingSuite"],
+    "name": "bitburner-bigboi",  "types": "index.d.ts",
+    "version": "1.0.1"
 }

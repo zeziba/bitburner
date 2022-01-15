@@ -1,20 +1,19 @@
 {
     "compilerOptions": {
-        "outDir": "./built",
         "allowJs": true,
-        "checkJs": true,
         "allowUnreachableCode": false,
-        "noImplicitReturns": true,
+        "baseUrl": ".",
+        "checkJs": true,
         "noImplicitAny": true,
-        "typeRoots": [ "./typings" ],
-        "outFile": "./built/combined.js",
-        "lib": [ "es2015" ],
-        "target": "es5"
+        "noImplicitReturns": true,
+        "outDir": "./built",
+        "paths": {
+            "hackingSuite/*": ["hackingSuite/"]
+        },
+        "target": "ES6",
+        "typeRoots": ["./typings"]
     },
-    "include": [
-        "./**/*"
-    ],
-    "exclude": [
-        "./built/**/*"
-    ]
+    "exclude": ["./built/*"],
+    "files": ["typings/index.d.ts"],
+    "include": ["hackingSuite/**/*", "typings/index.d.ts", "start.js", "launcher.js"]
 }
